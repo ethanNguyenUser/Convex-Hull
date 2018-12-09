@@ -295,7 +295,7 @@ public class Display extends JComponent{
 			finalPointList.add(pointList.get(currentIndex));
 			nextIndex = (currentIndex + 1) % pointList.size();
 			for(int k = 0; k < pointList.size(); k++) {
-				if(isCCW(pointList.get(currentIndex), pointList.get(k), pointList.get(nextIndex)))         //orientation has to be counter-clock-wise to add point
+				if(isCW(pointList.get(currentIndex), pointList.get(k), pointList.get(nextIndex)))         //orientation has to be counter-clock-wise to add point
 					nextIndex = k;
 	        }
 			currentIndex = nextIndex;
@@ -309,7 +309,7 @@ public class Display extends JComponent{
 		System.out.println(LINE);
 	}
 	
-	private boolean isCCW(Point a, Point b, Point c) {
+	private boolean isCW(Point a, Point b, Point c) {
 		int product = (b.getY() - a.getY()) * (c.getX() - b.getX()) - (b.getX() - a.getX()) * (c.getY() - b.getY()); 
 		return(product < 0) ? true : false;
 	}
@@ -406,6 +406,7 @@ Possible Test Input 1:
 5, 5
 10, -10
 -5, -5
+
 10, 10
 7, -7
 -10, 10
