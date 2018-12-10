@@ -1,6 +1,11 @@
 # Convex-Hull
 Convex Hull Program for APCS
 
+
+
+IMPORTANT NOTE - If you want to read from a file, you need to update the file path to data.txt in Display.java's function, readFromFile()
+
+
 Name: Ethan Nguyen
 Period: 1
 
