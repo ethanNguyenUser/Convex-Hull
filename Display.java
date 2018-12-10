@@ -13,13 +13,13 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Display extends JComponent{
 
 	private static final long serialVersionUID = 1L;
-	private final static String LINE = "-----------------------------------------------------------------------------------------------------------------------------------";
+	private final static String LINE = "---------------------------------------------------------------------";
 	private final static String STOP_INPUT = "q";
 	private final static String EXIT_PROGRAM = "EXIT";
 	private final static String READ_FROM_FILE = "FILE";
-	private static final String RANDOM_GENERATOR = "RAND";
-	private static final int GRAPH_WIDTH = 800;
-	private static final int GRAPH_HEIGHT = 800;
+	private final static String RANDOM_GENERATOR = "RAND";
+	private final static int GRAPH_WIDTH = 800;
+	private final static int GRAPH_HEIGHT = 800;
 	private final static int Y_MESSAGE_OFFSET = 20;
 	private final static int DEFAULT_SMALLEST_X = -10;
 	private final static int DEFAULT_LARGEST_X = 10;
@@ -27,40 +27,30 @@ public class Display extends JComponent{
 	private final static int DEFAULT_LARGEST_Y = 10;
 	private final static int POINT_SIZE = 8;
 	private final static Color LINE_COLOR= new Color(255, 245, 75);
-	private final static Color POINT_COLOR = new Color(255, 50, 50);
+	private final static Color POINT_COLOR = new Color(255, 80, 20);
 	
 	private static Scanner input = new Scanner(System.in);
 	private static int programUsageCounter = 1;
 	private static ArrayList<Point> pointList = new ArrayList<Point>();
 	private static ArrayList<Point> finalPointList = new ArrayList<Point>();
 	
-	public Display(int width, int height) {
+	public Display(int width, int height) { //constructor
 		setSize(width, height);
-		init();
-	}
- 
-	private void init() {
-		printStartMessage();
+		System.out.println(LINE);
+		System.out.println("Ethan Nguyen's Convex Hull Program");
+		System.out.println(LINE);
 	}
 	
-	public void runLoop() {
-		while(true) {
-			askInput();
+	public void runLoop() { //runs the loop for the entire program
+		while(askInput()) {
 			findPoints(findRightLowPoint());
 			printPoints();
 			repaint();
 			programUsageCounter++;
 		}
 	}
-
-	private void printStartMessage() {
-		System.out.println(LINE);
-		System.out.println("Convex Hull Finder");
-		System.out.println(LINE);
-	}
  
-	private static void askInput() {
-		//asks for input
+	private static boolean askInput() { //asks for input from user through file, random generator, or console
 		
 		String inputString = "";
 		int x = 0; //x value
@@ -80,22 +70,21 @@ public class Display extends JComponent{
 			System.out.println(LINE);
 			readFromFile();
 			System.out.println(LINE);
-			return;
+			return true;
 		}
 		
 		if(inputString.equals(RANDOM_GENERATOR)) {
 			System.out.println(LINE);
 			randomGenerator();
 			System.out.println(LINE);
-			return;
+			return true;
 		}
 		
 		if(inputString.equals(EXIT_PROGRAM)) {
 			System.out.println(LINE);
 			System.out.println("Thank you for using Ethan Nguyen's Convex Hull Program");
 			System.out.println(LINE);
-			input.close();
-			System.exit(0);
+			return false;
 		}
 		
 		System.out.println(LINE);
@@ -118,7 +107,7 @@ public class Display extends JComponent{
 			
 			try {
 			x = Integer.parseInt(inputString);
-			} catch(Exception e) {
+			} catch(NumberFormatException e) {
 				System.out.println("Unexpected Input " + e.getMessage());
 				System.out.println(LINE);
 				k--;
@@ -137,7 +126,7 @@ public class Display extends JComponent{
 			
 			try {
 				y = Integer.parseInt(inputString);
-			} catch(Exception e) {
+			} catch(NumberFormatException e) {
 				System.out.println("Unexpected Input " + e.getMessage());
 				System.out.println(LINE);
 				k--;
@@ -148,14 +137,16 @@ public class Display extends JComponent{
 			
 			System.out.println(LINE);
 		}
+		
+		return true;
 	}
 
-	private static void readFromFile() {
+	private static void readFromFile() { //reads from a file "data.txt"
 		
 		int numcoords = 0;
 
 	    try (
-	        Scanner sc = new Scanner(new BufferedReader(new FileReader("C:\\Users\\chris\\eclipse-workspace\\ConvexHull\\src\\ethanNguyen\\data")));
+	        Scanner sc = new Scanner(new BufferedReader(new FileReader("data.txt"))); //file path
 	        ) {
 	        while(sc.hasNextLine()) {
 	            //  this file read pass gets total number of coordinates
@@ -173,7 +164,7 @@ public class Display extends JComponent{
 	    System.out.println("File contains " + numcoords + " coordinate sets");
 
 	    try (
-	        Scanner sc = new Scanner(new BufferedReader(new FileReader("C:\\Users\\chris\\eclipse-workspace\\ConvexHull\\src\\ethanNguyen\\data")));
+	        Scanner sc = new Scanner(new BufferedReader(new FileReader("data.txt"))); //file path
 	        ) {
 	        int i = 0;
 	        int [] xx = new int[numcoords];  //  allocate array, we know
@@ -204,7 +195,7 @@ public class Display extends JComponent{
 	    }
 	}
 
-	private static void randomGenerator() {
+	private static void randomGenerator() { //generates random points given a floor, ceiling, and max points
 		
 		String inputString = "";
 		int xCeiling = 0;
@@ -259,21 +250,21 @@ public class Display extends JComponent{
 		
 	}
 	
-	private static void randomGeneratorError() {
+	private static void randomGeneratorError() { //error message for random generator
 		System.out.println(LINE);
 		System.out.println("Unexpected Input");
 		System.out.println(LINE);
 		randomGenerator();
 	}
 	
-	private int findRightLowPoint() {
+	private int findRightLowPoint() { //finds the right most point, then bottom point if some points are in line
 		
 		int rightLowIndex = 0;
 		
 		for(int k = 0; k < pointList.size(); k++) {
-			if(pointList.get(rightLowIndex).getX() < pointList.get(k).getX()                          //if tested point is right of current point
-					|| pointList.get(rightLowIndex).getX() == pointList.get(k).getX()                 //or (they are equal on x-axis
-							&& pointList.get(rightLowIndex).getY() > pointList.get(k).getY())         //and tested point is lower than current point)
+			if(pointList.get(rightLowIndex).getX() < pointList.get(k).getX() //if tested point is right of current point
+					|| pointList.get(rightLowIndex).getX() == pointList.get(k).getX() //or (they are equal on x-axis
+							&& pointList.get(rightLowIndex).getY() > pointList.get(k).getY()) //and tested point is lower than current point)
 				rightLowIndex = k;
 		}
 		
@@ -282,9 +273,9 @@ public class Display extends JComponent{
 		return rightLowIndex;
 	}
 	
-	private void findPoints(int firstIndex) {
+	private void findPoints(int firstIndex) { //finds the convex hull using gift-wrapping
 		
-		if(pointList.size() < 3) {                            //has to be at least three points
+		if(pointList.size() < 3) { //has to be at least three points
 			return;
 		}
 		
@@ -295,33 +286,33 @@ public class Display extends JComponent{
 			finalPointList.add(pointList.get(currentIndex));
 			nextIndex = (currentIndex + 1) % pointList.size();
 			for(int k = 0; k < pointList.size(); k++) {
-				if(isCW(pointList.get(currentIndex), pointList.get(k), pointList.get(nextIndex)))         //orientation has to be counter-clock-wise to add point
+				if(isCW(pointList.get(currentIndex), pointList.get(k), pointList.get(nextIndex))) //if clock-wise, then updates nextPoint
 					nextIndex = k;
 	        }
 			currentIndex = nextIndex;
 		}while(currentIndex != firstIndex);
 	}
 	
-	private void printPoints() {
+	private void printPoints() { //outputs convex hull points to console
 		System.out.println("Convex Hull Points:");
 		for (int k = 0; k < finalPointList.size(); k++)
 				System.out.println("Point " + (k + 1) + ": ("+ finalPointList.get(k).getX() +", "+ finalPointList.get(k).getY() +")");
 		System.out.println(LINE);
 	}
 	
-	private boolean isCW(Point a, Point b, Point c) {
+	private boolean isCW(Point a, Point b, Point c) { //checks if the points are clockwise c * c = (a - b) * (a - b)
 		int product = (b.getY() - a.getY()) * (c.getX() - b.getX()) - (b.getX() - a.getX()) * (c.getY() - b.getY()); 
 		return(product < 0) ? true : false;
 	}
 	
-	public void paintComponent(Graphics g) {
+	public void paintComponent(Graphics g) { //repaints graph every call
 		
 		int smallestX = DEFAULT_SMALLEST_X;
 		int largestX = DEFAULT_LARGEST_X;
 		int smallestY = DEFAULT_SMALLEST_Y;
 		int largestY = DEFAULT_LARGEST_Y;
 		
-		try {
+		try { //attempts to update smallest and largest x and y values based on convex hull points
 			smallestX = finalPointList.get(0).getX();
 			largestX = finalPointList.get(0).getX();
 			smallestY = finalPointList.get(0).getY();
@@ -360,25 +351,23 @@ public class Display extends JComponent{
 	    
 	    //draw convex hull
 	    g.setColor(LINE_COLOR);
-	    for(int k = 0; k < finalPointList.size() - 1; k++) {
-	    	int xPoint1 = (int) (GRAPH_WIDTH * (finalPointList.get(k).getX() - smallestX) / xRange);
-	    	int yPoint1 = (int) (GRAPH_HEIGHT - (GRAPH_HEIGHT * (finalPointList.get(k).getY() - smallestY) / yRange));  //checks weird y-flipping
-	    	int xPoint2 = (int) (GRAPH_WIDTH * (finalPointList.get(k + 1).getX() - smallestX) / xRange);
-	    	int yPoint2 = (int) (GRAPH_HEIGHT - (GRAPH_HEIGHT * (finalPointList.get(k + 1).getY() - smallestY) / yRange));  //checks weird y-flipping
-	    	//System.out.println("index " + k + ", x value " + xPoint + ", y value " + yPoint);
-	    	g.drawLine(xPoint1, yPoint1, xPoint2, yPoint2);
-	    }
-	    
-	    //last line
 	    
 	    try {
-		    int xPoint1 = (int) (GRAPH_WIDTH * (finalPointList.get(finalPointList.size() - 1).getX() - smallestX) / xRange);
-	    	int yPoint1 = (int) (GRAPH_HEIGHT - (GRAPH_HEIGHT * (finalPointList.get(finalPointList.size() - 1).getY() - smallestY) / yRange));
-	    	int xPoint2 = (int) (GRAPH_WIDTH * (finalPointList.get(0).getX() - smallestX) / xRange);
-	    	int yPoint2 = (int) (GRAPH_HEIGHT - (GRAPH_HEIGHT * (finalPointList.get(0).getY() - smallestY) / yRange));
-	    	g.drawLine(xPoint1, yPoint1, xPoint2, yPoint2);
+	    	
+	    	finalPointList.add(new Point(finalPointList.get(0).getX(), finalPointList.get(0).getY()));
+	    	
+	    	for(int k = 0; k < finalPointList.size() - 1; k++) {
+		    	int xPoint1 = (int) (GRAPH_WIDTH * (finalPointList.get(k).getX() - smallestX) / xRange);
+		    	int yPoint1 = (int) (GRAPH_HEIGHT - (GRAPH_HEIGHT * (finalPointList.get(k).getY() - smallestY) / yRange));  //checks weird y-flipping
+		    	int xPoint2 = (int) (GRAPH_WIDTH * (finalPointList.get(k + 1).getX() - smallestX) / xRange);
+		    	int yPoint2 = (int) (GRAPH_HEIGHT - (GRAPH_HEIGHT * (finalPointList.get(k + 1).getY() - smallestY) / yRange));  //checks weird y-flipping
+		    	//System.out.println("index " + k + ", x value " + xPoint + ", y value " + yPoint);
+		    	g.drawLine(xPoint1, yPoint1, xPoint2, yPoint2);
+		    }
+		    
+		    finalPointList.remove(finalPointList.size() - 1);
 	    }
-	    catch(IndexOutOfBoundsException e) {
+	    catch(IndexOutOfBoundsException e) { //nothing in finalPointList
 	    }
 	    
 	    //draw points
@@ -394,7 +383,7 @@ public class Display extends JComponent{
 	    clearLists();
 	  }
 	
-	private void clearLists() {
+	private void clearLists() { //clears list for next run
 		pointList.clear();
 		finalPointList.clear();
 	}
@@ -425,7 +414,7 @@ Possible Test Input 2:
 0, 0
 2, 5
 5, -2
--2, 5
+-2, -5
 -5, 2
 
 Possible Test Input 3:
