@@ -21,5 +21,6 @@ public class ConvexHull {
 		f.setResizable(IS_RESIZABLE);
 		f.setVisible(true);
 		display.runLoop();
+		System.exit(0);
 	}
 }
