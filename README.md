@@ -19,7 +19,7 @@ Enter "RAND" to generate a random set of points
 Enter "EXIT" to terminate the program
 Enter anything else to read from console
 
-Reading from a file means inputing numbers through data.txt, and is one of the faster ways of inputing data
+Reading from a file means inputting numbers through data.txt, and is one of the faster ways of inputting data
 The random point generator allows you to specify the floor and ceiling of the points as well as the max number of random points
 Console input takes x and y values for every point
 All inputs only accept integer values, and the program will ask for input again if the user enters any unexpected input
