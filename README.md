@@ -36,7 +36,7 @@ Graph scales according to the largest and smallest x and y point values
 
 All points are shown with coordinates listed
 
-Colors of lines, points, background, and sidelines are easily changable
+Colors of lines, points, background, and sidelines are easily changeable
 
 
 
