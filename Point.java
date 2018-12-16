@@ -4,6 +4,7 @@ public class Point implements Comparable<Point> {
 	
 	private int x;
 	private int y;
+	private static final double SMALLEST_DOUBLE = -2147483648;
 	
 	Point(int x, int y){
 		this.x = x;
@@ -16,15 +17,14 @@ public class Point implements Comparable<Point> {
 	
 	@Override
     public int compareTo(Point other) {
-		return Double.compare(this.getPolarOrder(), other.getPolarOrder());
+		return Double.compare(this.getSlope(), other.getSlope());
     }
 	
-	private double getPolarOrder() {
-		
+	private double getSlope() {
 		Point first = Display.getFirstIndex(); //right-bottom point
-		double polarAngle = Math.toDegrees(Math.atan2(this.y - first.y, this.x - first.x)); //gets polar angle of tested point with right-bottom point acting as origin
-		polarAngle = (polarAngle < 0) ? polarAngle + 360: polarAngle; //if negative, adds 360 to polar angle
-		
-		return polarAngle;
+		if(this.x - first.x == 0) //prevent / 0 error
+			return SMALLEST_DOUBLE;
+		double slope = (double) (this.y - first.y) / (this.x - first.x);
+		return slope;
 	}
 }
