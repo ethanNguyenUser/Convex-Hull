@@ -28,11 +28,14 @@ public class Display extends JComponent{
 	private final static int POINT_SIZE = 8;
 	private final static Color LINE_COLOR= new Color(255, 245, 75);
 	private final static Color POINT_COLOR = new Color(255, 80, 20);
-	
+
 	private static Scanner input = new Scanner(System.in);
 	private static int programUsageCounter = 1;
 	private static ArrayList<Point> pointList = new ArrayList<Point>();
 	private static ArrayList<Point> finalPointList = new ArrayList<Point>();
+	private static Point firstIndex = new Point(0, 0);
+	
+	public static Point getFirstIndex() { return firstIndex; }
 	
 	public Display(int width, int height) { //constructor
 		setSize(width, height);
@@ -146,7 +149,7 @@ public class Display extends JComponent{
 		int numcoords = 0;
 
 	    try (
-	        Scanner sc = new Scanner(new BufferedReader(new FileReader("data.txt"))); //file path
+	        Scanner sc = new Scanner(new BufferedReader(new FileReader("data"))); //file path
 	        ) {
 	        while(sc.hasNextLine()) {
 	            //  this file read pass gets total number of coordinates
@@ -164,7 +167,7 @@ public class Display extends JComponent{
 	    System.out.println("File contains " + numcoords + " coordinate sets");
 
 	    try (
-	        Scanner sc = new Scanner(new BufferedReader(new FileReader("data.txt"))); //file path
+	        Scanner sc = new Scanner(new BufferedReader(new FileReader("data"))); //file path
 	        ) {
 	        int i = 0;
 	        int [] xx = new int[numcoords];  //  allocate array, we know
@@ -270,27 +273,34 @@ public class Display extends JComponent{
 		
 		//System.out.println("Right Low Index: (" + pointList.get(rightLowIndex).getX() + ", " + pointList.get(rightLowIndex).getY() + ")");
 		
+		try {
+		firstIndex = pointList.get(rightLowIndex);
+		}
+		catch(IndexOutOfBoundsException e) {
+		}
+		
 		return rightLowIndex;
 	}
 	
-	private void findPoints(int firstIndex) { //finds the convex hull using gift-wrapping
+	private void findPoints(int firstIndex) { //finds the convex hull using Graham scan
 		
 		if(pointList.size() < 3) { //has to be at least three points
 			return;
 		}
 		
-		int nextIndex = 0;
-		int currentIndex = firstIndex;
-        
-		do{
-			finalPointList.add(pointList.get(currentIndex));
-			nextIndex = (currentIndex + 1) % pointList.size();
-			for(int k = 0; k < pointList.size(); k++) {
-				if(isCW(pointList.get(currentIndex), pointList.get(k), pointList.get(nextIndex))) //if clock-wise, then updates nextPoint
-					nextIndex = k;
-	        }
-			currentIndex = nextIndex;
-		}while(currentIndex != firstIndex);
+		pointList.sort(Point::compareTo);
+		
+		//adds points to finalPointList which acts as a stack
+		for(int k = 0; k < pointList.size(); k++) { //for all points after first and second in pointList
+			while(finalPointList.size() >= 2 && //while stack size >= 2 and stack points are counter clockwise
+					isCCW(finalPointList.get(finalPointList.size() - 2), finalPointList.get(finalPointList.size() - 1), pointList.get(k)))
+				finalPointList.remove(finalPointList.size() - 1); //pop stack
+			finalPointList.add(pointList.get(k)); //push next largest polar angle point in sorted pointList
+		}
+		
+		if(finalPointList.size() <= 2) { //in case all points are linear
+			finalPointList.clear();
+		}
 	}
 	
 	private void printPoints() { //outputs convex hull points to console
@@ -299,10 +309,9 @@ public class Display extends JComponent{
 				System.out.println("Point " + (k + 1) + ": ("+ finalPointList.get(k).getX() +", "+ finalPointList.get(k).getY() +")");
 		System.out.println(LINE);
 	}
-	
-	private boolean isCW(Point a, Point b, Point c) { //checks if the points are clockwise c * c = (a - b) * (a - b)
-		int product = (b.getY() - a.getY()) * (c.getX() - b.getX()) - (b.getX() - a.getX()) * (c.getY() - b.getY()); 
-		return(product < 0) ? true : false;
+		
+	private boolean isCCW(Point a, Point b, Point c) { //returns true if counter clockwise turn (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)
+		return (b.getX() - a.getX()) * (c.getY() - a.getY()) - (b.getY() - a.getY()) * (c.getX() - a.getX()) <= 0;
 	}
 	
 	public void paintComponent(Graphics g) { //repaints graph every call
@@ -380,53 +389,8 @@ public class Display extends JComponent{
 	    	g.drawString("(" + pointList.get(k).getX() + ", " + pointList.get(k).getY() + ")", xPoint, yPoint + Y_MESSAGE_OFFSET);
 	    }
 	    
-	    clearLists();
-	  }
-	
-	private void clearLists() { //clears list for next run
-		pointList.clear();
+	    pointList.clear();
 		finalPointList.clear();
-	}
+	  }
 
 }
-
-/*
-Possible Test Input 1:
-5, 5
-10, -10
--5, -5
-
-10, 10
-7, -7
--10, 10
-3, 3
--10, -10
-
-Possible Test Input 2:
-0, 10
-10, 0
-0, -10
--10, 0
--8, 8
-8, 8
-8, -8
--8, -8
-0, 0
-2, 5
-5, -2
--2, -5
--5, 2
-
-Possible Test Input 3:
-10, 10
-4, 5 
-2, 3
--6, 9
-6, -9
--3, 5
--7, 8
-0, 1
-0, -1
--5, -3
-
- */
