@@ -46,7 +46,8 @@ public class Display extends JComponent{
 	
 	public void runLoop() { //runs the loop for the entire program
 		while(askInput()) {
-			findPoints(findRightLowPoint());
+			findRightLowPoint();
+			findPoints();
 			printPoints();
 			repaint();
 			programUsageCounter++;
@@ -149,7 +150,7 @@ public class Display extends JComponent{
 		int numcoords = 0;
 
 	    try (
-	        Scanner sc = new Scanner(new BufferedReader(new FileReader("data"))); //file path
+	        Scanner sc = new Scanner(new BufferedReader(new FileReader("C:\\Users\\chris\\eclipse-workspace\\ConvexHull\\src\\ethanNguyen\\data"))); //file path
 	        ) {
 	        while(sc.hasNextLine()) {
 	            //  this file read pass gets total number of coordinates
@@ -167,7 +168,7 @@ public class Display extends JComponent{
 	    System.out.println("File contains " + numcoords + " coordinate sets");
 
 	    try (
-	        Scanner sc = new Scanner(new BufferedReader(new FileReader("data"))); //file path
+	        Scanner sc = new Scanner(new BufferedReader(new FileReader("C:\\Users\\chris\\eclipse-workspace\\ConvexHull\\src\\ethanNguyen\\data"))); //file path
 	        ) {
 	        int i = 0;
 	        int [] xx = new int[numcoords];  //  allocate array, we know
@@ -260,7 +261,7 @@ public class Display extends JComponent{
 		randomGenerator();
 	}
 	
-	private int findRightLowPoint() { //finds the right most point, then bottom point if some points are in line
+	private void findRightLowPoint() { //finds the right most point, then bottom point if some points are in line
 		
 		int rightLowIndex = 0;
 		
@@ -278,11 +279,9 @@ public class Display extends JComponent{
 		}
 		catch(IndexOutOfBoundsException e) {
 		}
-		
-		return rightLowIndex;
 	}
 	
-	private void findPoints(int firstIndex) { //finds the convex hull using Graham scan
+	private void findPoints() { //finds the convex hull using Graham scan
 		
 		if(pointList.size() < 3) { //has to be at least three points
 			return;
