@@ -288,7 +288,8 @@ public class Display extends JComponent{
 		}
 		
 		pointList.sort(Point::compareTo);
-		
+
+
 		//adds points to finalPointList which acts as a stack
 		for(int k = 0; k < pointList.size(); k++) { //for all points
 			while(finalPointList.size() >= 2 && //while stack size >= 2 and stack points are clockwise
