@@ -291,8 +291,8 @@ public class Display extends JComponent{
 		
 		//adds points to finalPointList which acts as a stack
 		for(int k = 0; k < pointList.size(); k++) { //for all points
-			while(finalPointList.size() >= 2 && //while stack size >= 2 and stack points are counter clockwise
-					isCCW(finalPointList.get(finalPointList.size() - 2), finalPointList.get(finalPointList.size() - 1), pointList.get(k)))
+			while(finalPointList.size() >= 2 && //while stack size >= 2 and stack points are clockwise
+					isCW(finalPointList.get(finalPointList.size() - 2), finalPointList.get(finalPointList.size() - 1), pointList.get(k)))
 				finalPointList.remove(finalPointList.size() - 1); //pop stack
 			finalPointList.add(pointList.get(k)); //push next largest polar angle point in sorted pointList
 		}
@@ -309,7 +309,7 @@ public class Display extends JComponent{
 		System.out.println(LINE);
 	}
 		
-	private boolean isCCW(Point a, Point b, Point c) { //returns true if counter clockwise turn (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)
+	private boolean isCW(Point a, Point b, Point c) { //returns true if counter clockwise turn (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)
 		return (b.getX() - a.getX()) * (c.getY() - a.getY()) - (b.getY() - a.getY()) * (c.getX() - a.getX()) <= 0;
 	}
 	
