@@ -295,7 +295,7 @@ public class Display extends JComponent{
 			while(finalPointList.size() >= 2 && //while stack size >= 2 and stack points are clockwise
 					isCW(finalPointList.get(finalPointList.size() - 2), finalPointList.get(finalPointList.size() - 1), pointList.get(k)))
 				finalPointList.remove(finalPointList.size() - 1); //pop stack
-			finalPointList.add(pointList.get(k)); //push next largest polar angle point in sorted pointList
+			finalPointList.add(pointList.get(k)); //push next largest slope point in sorted pointList
 		}
 		
 		if(finalPointList.size() <= 2) { //in case all points are linear
